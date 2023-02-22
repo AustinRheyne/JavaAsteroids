@@ -63,7 +63,7 @@ class Asteroids extends Game {
         a.repaint();
     }
 
-    public Asteroid createAsteroid() throws FileNotFoundException {
+    public Asteroid createAsteroid() throws FileNotFoundException, ArrayIndexOutOfBoundsException {
         File chosenPrefabFile =  asteroidFiles[getRandomNumber(0, asteroidFiles.length-1)];
         Scanner reader = new Scanner(chosenPrefabFile);
         String data = reader.nextLine();
