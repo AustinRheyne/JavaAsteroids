@@ -1,7 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
 
 class Polygon extends Shape {
     public double rotation;
@@ -9,8 +5,8 @@ class Polygon extends Shape {
     public Polygon(Point[] shape, Point position, double rotation, Game screen) {
         super(screen, position, shape);
         this.rotation = rotation;
-        Point origin = new Point(shape[0].getX(), shape[0].getY());
-        for (Point p : shape) {
+        Point origin = new Point(super.shape[0].getX(), super.shape[0].getY());
+        for (Point p : super.shape) {
             if (p.getX() < origin.getX()) {
                 origin.setX(p.getX());
             }
@@ -20,21 +16,16 @@ class Polygon extends Shape {
         }
 
         // Then, we orient all of its points relative to the real origin.
-        for (Point p : shape) {
+        for (Point p : super.shape) {
             p.setX(p.getX() - origin.getX());
             p.setY(p.getY() - origin.getY());
         }
 
     }
 
-    public Game getScreen() {
-        return this.screen;
-    }
-
     public void rotate(int degrees) {
         this.rotation = (this.rotation + (double)degrees) % 360.0;
     }
-
     private double findArea() {
         double sum = 0.0;
         int i = 0;

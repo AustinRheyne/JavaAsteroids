@@ -7,5 +7,8 @@ public class Circle extends Shape{
         this.radius = radius;
         this.shape = getPoints(); // Now that it has been instantiated, make sure we update the obj
     }
+    public double findArea() {
+        return Math.PI * (radius*radius);
+    }
     public void update() {}
 }

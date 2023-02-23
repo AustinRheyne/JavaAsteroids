@@ -64,6 +64,7 @@ class Asteroids extends Game {
     }
 
     public Asteroid createAsteroid() throws FileNotFoundException, ArrayIndexOutOfBoundsException {
+        /*
         File chosenPrefabFile =  asteroidFiles[getRandomNumber(0, asteroidFiles.length-1)];
         Scanner reader = new Scanner(chosenPrefabFile);
         String data = reader.nextLine();
@@ -78,7 +79,9 @@ class Asteroids extends Game {
             double y = Double.parseDouble(str.split(",")[1]);
             result[i] = new Point(x, y);
         }
-        return new Asteroid(this, result);
+         */
+        Point[] asteroid1 = new Point[]{new Point(0, 0), new Point(0, 20), new Point(20, 20), new Point(20, 0)};
+        return new Asteroid(this, asteroid1);
     }
     public Star createStar() {
         Star star = new Star(this, getRandomNumber(1, 10));

@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.security.spec.RSAOtherPrimeInfo;
 
 public class Shape {
     protected Point position;
@@ -13,6 +14,9 @@ public class Shape {
     }
     public void setColor(Color color) { this.color = color; }
     public Color getColor() { return color; }
+    public Game getScreen() {
+        return this.screen;
+    }
 
     /**
      * getPoints applies the rotation and offset to the shape of the polygon
@@ -30,10 +34,10 @@ public class Shape {
             }
             return points;
         }
-        double rotation = ((Polygon)this).rotation;
         int i = 0;
         Point center = ((Polygon)this).findCenter();
         Point[] points = new Point[shape.length];
+        double rotation = ((Polygon) this).rotation;
         for (Point p : shape) {
             double x = ((p.getX()-center.getX()) * Math.cos(Math.toRadians(rotation)))
                     - ((p.getY()-center.getY()) * Math.sin(Math.toRadians(rotation)))
@@ -76,8 +80,8 @@ public class Shape {
         int[] x = new int[this.shape.length];
         int[] y = new int[this.shape.length];
         for (int i = 0; i < this.shape.length; i++) {
-            x[i] = (int) this.shape[i].getX() + (int)position.getX();
-            y[i] = (int) this.shape[i].getY() + (int)position.getY();
+            x[i] = (int) this.getPoints()[i].getX();
+            y[i] = (int) this.getPoints()[i].getY();
         }
         brush.setColor(getColor());
         brush.fillPolygon(x, y, shape.length);

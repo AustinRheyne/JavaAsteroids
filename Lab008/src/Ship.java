@@ -48,7 +48,6 @@ public class Ship extends Polygon implements KeyListener {
         pull.setY(pull.getY() + (acceleration * Math.sin(Math.toRadians(rotation))));
     }
 
-
     @Override
     public void keyTyped(KeyEvent e) {}
 
