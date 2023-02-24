@@ -2,12 +2,28 @@ import java.awt.*;
 
 public class Bullet extends Circle{
     private Ship player;
+    private double dx = 0.0;
+    private double dy = 0.0;
+    private Point inertia;
+    private final double SPEED = 5;
+    public boolean remove = false;
     public Bullet(Game screen, int radius, Ship player) {
         super(screen, radius, new Point(player.position.getX(), player.position.getY()));
         this.player = player;
         this.setColor(Color.RED);
-    }
+        this.NO_WRAP = true;
 
+        // Use the rotation of the ship and the unit circle to decide the correct rate of change
+        dx = Math.cos(Math.toRadians(player.rotation))*SPEED;
+        dy = Math.sin(Math.toRadians(player.rotation))*SPEED;
+        inertia = new Point(player.getPull().getX(), player.getPull().getY()); // Take the current ship velocity so that we adhere to
+        // Newtons laws of motion
+    }
+    public void update() {
+        position.setX(position.getX() + inertia.getX() + dx);
+        position.setY(position.getY() + inertia.getY() + dy);
+    }
+    public void onEdge() {remove = true;}
 
 
 }

@@ -7,6 +7,8 @@ public class Shape {
     protected Game screen;
     private Color color = Color.WHITE;
 
+    protected boolean NO_WRAP = false; // If true, items will be destroyed instead of wrapping
+
     public Shape(Game screen, Point position, Point[] points) {
         this.screen = screen;
         this.position = position;
@@ -30,7 +32,7 @@ public class Shape {
             Point[] points = new Point[amount];
             for (int i = 0; i < amount; i++) {
                 double theta = Math.toRadians(360.0/amount);
-                points[i] = new Point((position.getX() + radius) * Math.cos(theta), (position.getY() + radius) * Math.sin(theta));
+                points[i] = new Point(position.getX() + (radius * Math.cos(theta)), position.getY() + (radius * Math.sin(theta)));
             }
             return points;
         }
@@ -90,13 +92,27 @@ public class Shape {
     public void update() { return; }
 
     private void wrapPosition() {
-        if (position.getX() > screen.getWidth()) { position.setX(0); }
-        if (position.getY() > screen.getHeight()) { position.setY(0); }
-        if (position.getX() < 0) { position.setX(screen.getWidth()); }
-        if (position.getY() < 0) { position.setY(screen.getHeight()); }
+        if (position.getX() > screen.getWidth()) {
+            position.setX(0);
+            if(NO_WRAP) { onEdge(); }
+        }
+        if (position.getY() > screen.getHeight()) {
+            position.setY(0);
+            if(NO_WRAP) { onEdge(); }
+        }
+        if (position.getX() < 0) {
+            position.setX(screen.getWidth());
+            if(NO_WRAP) { onEdge(); }
+        }
+        if (position.getY() < 0) {
+            position.setY(screen.getHeight());
+            if(NO_WRAP) { onEdge(); }
+        }
+
     }
 
-    public boolean collides(Polygon target) {
+    public void onEdge() {return;}
+    public boolean collides(Shape target) {
         for (int i = 0; i < target.shape.length; i++) {
             if(contains(target.getPoints()[i])) {
                 return true;
@@ -104,5 +120,4 @@ public class Shape {
         }
         return false;
     }
-
 }

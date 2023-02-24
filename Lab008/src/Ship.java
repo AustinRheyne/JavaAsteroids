@@ -6,7 +6,7 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 public class Ship extends Polygon implements KeyListener {
     private final double SPEED = 0.05;
-    private final double TORQUE = 1;
+    private final double TORQUE = 2;
     private boolean forward = false;
     private boolean backward = false;
     private boolean left = false;
@@ -23,6 +23,8 @@ public class Ship extends Polygon implements KeyListener {
         turn();
         move();
     }
+
+    public Point getPull() {return pull;}
 
     public void move() {
 

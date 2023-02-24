@@ -27,7 +27,7 @@ class Asteroids extends Game {
 
         asteroidFiles = new File("./Asteroids").listFiles();
 
-        for(int i = 0; i < 5; ++i) {
+        for(int i = 0; i < 7; ++i) {
             try {
                 this.obstructions.add(this.createAsteroid());
             } catch (FileNotFoundException ignored) {}
@@ -52,17 +52,25 @@ class Asteroids extends Game {
             star.paint(brush);
         }
 
+        ArrayList<Bullet> toRemove = new ArrayList<Bullet>();
         for (Bullet bullet : bullets) {
             bullet.paint(brush);
+            if (bullet.remove) { toRemove.add(bullet); }
+            else{ // All asteroids and bullets have been moved, check for collision
+                for(Asteroid obj : obstructions) {
+                    if (bullet.collides(obj)) {
+                        bullet.setColor(Color.magenta);
+                    }
+                }
+            }
         }
+        bullets.removeAll(toRemove);
 
     }
-
     public static void main(String[] args) {
         Asteroids a = new Asteroids();
         a.repaint();
     }
-
     public Asteroid createAsteroid() throws FileNotFoundException, ArrayIndexOutOfBoundsException {
         /*
         File chosenPrefabFile =  asteroidFiles[getRandomNumber(0, asteroidFiles.length-1)];
@@ -89,7 +97,7 @@ class Asteroids extends Game {
         return star;
     }
     public void createBullet() {
-        this.bullets.add(new Bullet(this, 10, this.player));
+        this.bullets.add(new Bullet(this, 40, this.player));
     }
     public static int getRandomNumber(int min, int max) {
         return (int)(Math.random() * (double)(max - min) + (double)min);
