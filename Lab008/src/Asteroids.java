@@ -38,7 +38,6 @@ class Asteroids extends Game {
         }
 
     }
-
     public void paint(Graphics brush) {
         brush.setColor(Color.black);
         brush.fillRect(0, 0, this.width, this.height);
@@ -52,20 +51,24 @@ class Asteroids extends Game {
             star.paint(brush);
         }
 
-        ArrayList<Bullet> toRemove = new ArrayList<Bullet>();
+        ArrayList<Bullet> toRemoveB = new ArrayList<Bullet>();
+        ArrayList<Asteroid> toRemoveAst = new ArrayList<Asteroid>();
         for (Bullet bullet : bullets) {
             bullet.paint(brush);
-            if (bullet.remove) { toRemove.add(bullet); }
+            if (bullet.remove) { toRemoveB.add(bullet); }
             else{ // All asteroids and bullets have been moved, check for collision
                 for(Asteroid obj : obstructions) {
                     if (bullet.collides(obj)) {
                         bullet.remove = true;
+                        toRemoveAst.add(obj);
                     }
                 }
             }
         }
-        bullets.removeAll(toRemove);
-
+        bullets.removeAll(toRemoveB);
+        for (Asteroid ast : toRemoveAst) {
+            splitAsteroid(ast);
+        }
     }
     public static void main(String[] args) {
         Asteroids a = new Asteroids();
@@ -88,8 +91,31 @@ class Asteroids extends Game {
             result[i] = new Point(x, y);
         }
          */
-        Point[] asteroid1 = new Point[]{new Point(0, 0), new Point(0, 20), new Point(20, 20), new Point(10, 30), new Point(20, 0)};
-        return new Asteroid(this, asteroid1);
+        Point[] asteroid1 = new Point[]{new Point(0, 0), new Point(0, 20), new Point(10, 30), new Point(20, 20), new Point(20, 0)};
+        return new Asteroid(this, asteroid1, 3);
+    }
+    public Asteroid createAsteroid(double x, double y, int size) throws FileNotFoundException, ArrayIndexOutOfBoundsException {
+        /*
+        File chosenPrefabFile =  asteroidFiles[getRandomNumber(0, asteroidFiles.length-1)];
+        Scanner reader = new Scanner(chosenPrefabFile);
+        String data = reader.nextLine();
+        String[] pnts = data.split("\\],\\[");
+        Point[] result = new Point[pnts.length];
+        for(int i = 0; i < result.length; i++) {
+            String str = pnts[i];
+            str = str.replace("[", "");
+            str = str.replace("]", "");
+            System.out.println(Arrays.toString(str.split(",")));
+            double x = Double.parseDouble(str.split(",")[0]);
+            double y = Double.parseDouble(str.split(",")[1]);
+            result[i] = new Point(x, y);
+        }
+         */
+        Point[] asteroid1 = new Point[]{new Point(0, 0), new Point(0, 20), new Point(10, 30), new Point(20, 20), new Point(20, 0)};
+        Asteroid ast = new Asteroid(this, asteroid1, size);
+        ast.position.setX(x);
+        ast.position.setY(y);
+        return ast;
     }
     public Star createStar() {
         Star star = new Star(this, getRandomNumber(1, 10));
@@ -101,5 +127,16 @@ class Asteroids extends Game {
     }
     public static int getRandomNumber(int min, int max) {
         return (int)(Math.random() * (double)(max - min) + (double)min);
+    }
+    public void splitAsteroid(Asteroid ast) {
+        ast.decrementSize();
+        if(ast.getSize() <= 0) {
+            obstructions.remove(ast);
+            return;
+        }
+        double x = ast.position.getX();
+        double y = ast.position.getY();
+        try { obstructions.add(createAsteroid(x, y, ast.getSize())); obstructions.add(createAsteroid(x, y, ast.getSize())); } catch (Exception ignored) {}
+        obstructions.remove(ast);
     }
 }
