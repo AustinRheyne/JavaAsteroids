@@ -6,17 +6,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Scanner;
 
 class Asteroids extends Game {
     Ship player;
     Point[] ship1 = new Point[]{new Point(0.0, 0.0), new Point(0.0, 20.0), new Point(20.0, 10.0)};
-    ArrayList<Asteroid> obstructions = new ArrayList();
-    ArrayList<Star> stars = new ArrayList();
-    ArrayList<Bullet> bullets = new ArrayList();
-    File[] asteroidFiles;
-
+    ArrayList<Asteroid> obstructions = new ArrayList<>();
+    ArrayList<Star> stars = new ArrayList<>();
+    ArrayList<Bullet> bullets = new ArrayList<>();
+    File[] largeAsteroidFiles;
+    File[] mediumAsteroidFiles;
+    File[] smallAsteroidFiles;
 
     public Asteroids() {
         super("Asteroids!", 800, 600);
@@ -25,7 +25,9 @@ class Asteroids extends Game {
         this.player = new Ship(this, this, this.ship1, 0.0);
         this.addKeyListener(this.player);
 
-        asteroidFiles = new File("./Asteroids").listFiles();
+        largeAsteroidFiles = new File("./LargeAsteroids").listFiles();
+        mediumAsteroidFiles = new File("./MediumAsteroids").listFiles();
+        smallAsteroidFiles = new File("./SmallAsteroids").listFiles();
 
         for(int i = 0; i < 7; ++i) {
             try {
@@ -51,8 +53,8 @@ class Asteroids extends Game {
             star.paint(brush);
         }
 
-        ArrayList<Bullet> toRemoveB = new ArrayList<Bullet>();
-        ArrayList<Asteroid> toRemoveAst = new ArrayList<Asteroid>();
+        ArrayList<Bullet> toRemoveB = new ArrayList<>();
+        ArrayList<Asteroid> toRemoveAst = new ArrayList<>();
         for (Bullet bullet : bullets) {
             bullet.paint(brush);
             if (bullet.remove) { toRemoveB.add(bullet); }
@@ -75,8 +77,8 @@ class Asteroids extends Game {
         a.repaint();
     }
     public Asteroid createAsteroid() throws FileNotFoundException, ArrayIndexOutOfBoundsException {
-        /*
-        File chosenPrefabFile =  asteroidFiles[getRandomNumber(0, asteroidFiles.length-1)];
+
+        File chosenPrefabFile =  largeAsteroidFiles[getRandomNumber(0, largeAsteroidFiles.length)];
         Scanner reader = new Scanner(chosenPrefabFile);
         String data = reader.nextLine();
         String[] pnts = data.split("\\],\\[");
@@ -85,17 +87,16 @@ class Asteroids extends Game {
             String str = pnts[i];
             str = str.replace("[", "");
             str = str.replace("]", "");
-            System.out.println(Arrays.toString(str.split(",")));
             double x = Double.parseDouble(str.split(",")[0]);
             double y = Double.parseDouble(str.split(",")[1]);
             result[i] = new Point(x, y);
         }
-         */
-        Point[] asteroid1 = new Point[]{new Point(0, 0), new Point(0, 20), new Point(10, 30), new Point(20, 20), new Point(20, 0)};
-        return new Asteroid(this, asteroid1, 3);
+
+        //Point[] asteroid1 = new Point[]{new Point(0, 0), new Point(0, 20), new Point(10, 30), new Point(20, 20), new Point(20, 0)};
+        return new Asteroid(this, result, 3);
     }
-    public Asteroid createAsteroid(double x, double y, int size) throws FileNotFoundException, ArrayIndexOutOfBoundsException {
-        /*
+    public Asteroid createAsteroid(double oldX, double oldY, int size) throws FileNotFoundException, ArrayIndexOutOfBoundsException {
+        File[] asteroidFiles = size == 3 ? largeAsteroidFiles : size == 2 ? mediumAsteroidFiles : smallAsteroidFiles;
         File chosenPrefabFile =  asteroidFiles[getRandomNumber(0, asteroidFiles.length-1)];
         Scanner reader = new Scanner(chosenPrefabFile);
         String data = reader.nextLine();
@@ -105,16 +106,15 @@ class Asteroids extends Game {
             String str = pnts[i];
             str = str.replace("[", "");
             str = str.replace("]", "");
-            System.out.println(Arrays.toString(str.split(",")));
             double x = Double.parseDouble(str.split(",")[0]);
             double y = Double.parseDouble(str.split(",")[1]);
             result[i] = new Point(x, y);
         }
-         */
-        Point[] asteroid1 = new Point[]{new Point(0, 0), new Point(0, 20), new Point(10, 30), new Point(20, 20), new Point(20, 0)};
-        Asteroid ast = new Asteroid(this, asteroid1, size);
-        ast.position.setX(x);
-        ast.position.setY(y);
+
+        //Point[] asteroid1 = new Point[]{new Point(0, 0), new Point(0, 20), new Point(10, 30), new Point(20, 20), new Point(20, 0)};
+        Asteroid ast = new Asteroid(this, result, size);
+        ast.position.setX(oldX);
+        ast.position.setY(oldY);
         return ast;
     }
     public Star createStar() {
