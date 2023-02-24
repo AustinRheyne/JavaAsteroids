@@ -18,4 +18,5 @@ public class Asteroid extends Polygon{
         position.setX(position.getX() + (SPEED*dx));
         position.setY(position.getY() + (SPEED*dy));
     }
+
 }

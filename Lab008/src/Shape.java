@@ -7,6 +7,8 @@ public class Shape {
     protected Game screen;
     private Color color = Color.WHITE;
 
+    public boolean remove = false;
+
     protected boolean NO_WRAP = false; // If true, items will be destroyed instead of wrapping
 
     public Shape(Game screen, Point position, Point[] points) {
@@ -28,12 +30,13 @@ public class Shape {
     public Point[] getPoints() {
         if(this instanceof Circle) {
             int radius = ((Circle)this).radius;
-            int amount = radius * 4;
-            Point[] points = new Point[amount];
+            int amount = 12;
+            Point[] points = new Point[amount+1];
             for (int i = 0; i < amount; i++) {
                 double theta = Math.toRadians(360.0/amount);
-                points[i] = new Point(position.getX() + (radius * Math.cos(theta)), position.getY() + (radius * Math.sin(theta)));
+                points[i] = new Point(position.getX() + (radius * Math.cos(theta*i)), position.getY() + (radius * Math.sin(theta*i)));
             }
+            points[points.length-1] = new Point(position.getX(), position.getY()); // Include the cetner of the circle
             return points;
         }
         int i = 0;
@@ -56,9 +59,9 @@ public class Shape {
      * contains implements some magical math (i.e. the ray-casting algorithm)
      */
     public boolean contains(Point point) {
-        Point[] points = shape;
+        Point[] points = getPoints();
         double crossingNumber = 0;
-        for (int i = 0, j = 1; i < shape.length; i++, j=(j+1)%shape.length) {
+        for (int i = 0, j = 1; i < getPoints().length; i++, j=(j+1)%getPoints().length) {
             if ((((points[i].getX() < point.getX()) && (point.getX() <= points[j].getX())) ||
                     ((points[j].getX() < point.getX()) && (point.getX() <= points[i].getX()))) &&
                     (point.getY() > points[i].getY() + (points[j].getY()-points[i].getY())/
@@ -113,11 +116,18 @@ public class Shape {
 
     public void onEdge() {return;}
     public boolean collides(Shape target) {
-        for (int i = 0; i < target.shape.length; i++) {
+        for (int i = 0; i < target.getPoints().length; i++) {
             if(contains(target.getPoints()[i])) {
                 return true;
             }
         }
         return false;
+    }
+
+    public void showPoints(int size, Color color, Graphics brush){
+        for(Point p : getPoints()) {
+            brush.setColor(color);
+            brush.fillOval((int)p.getX(), (int)p.getY(), size, size);
+        }
     }
 }

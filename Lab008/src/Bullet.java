@@ -6,7 +6,6 @@ public class Bullet extends Circle{
     private double dy = 0.0;
     private Point inertia;
     private final double SPEED = 5;
-    public boolean remove = false;
     public Bullet(Game screen, int radius, Ship player) {
         super(screen, radius, new Point(player.position.getX(), player.position.getY()));
         this.player = player;

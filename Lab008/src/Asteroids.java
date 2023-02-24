@@ -59,7 +59,7 @@ class Asteroids extends Game {
             else{ // All asteroids and bullets have been moved, check for collision
                 for(Asteroid obj : obstructions) {
                     if (bullet.collides(obj)) {
-                        bullet.setColor(Color.magenta);
+                        bullet.remove = true;
                     }
                 }
             }
@@ -88,7 +88,7 @@ class Asteroids extends Game {
             result[i] = new Point(x, y);
         }
          */
-        Point[] asteroid1 = new Point[]{new Point(0, 0), new Point(0, 20), new Point(20, 20), new Point(20, 0)};
+        Point[] asteroid1 = new Point[]{new Point(0, 0), new Point(0, 20), new Point(20, 20), new Point(10, 30), new Point(20, 0)};
         return new Asteroid(this, asteroid1);
     }
     public Star createStar() {
@@ -97,7 +97,7 @@ class Asteroids extends Game {
         return star;
     }
     public void createBullet() {
-        this.bullets.add(new Bullet(this, 40, this.player));
+        this.bullets.add(new Bullet(this, 9, this.player));
     }
     public static int getRandomNumber(int min, int max) {
         return (int)(Math.random() * (double)(max - min) + (double)min);
