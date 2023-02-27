@@ -9,11 +9,9 @@ public class Particle extends Square{
     private double angle;
 
     private Color color = Color.red;
-    public Particle(Game screen, Point position, Point origin, double force) {
+    public Particle(Game screen, Point position, double angle, double force) {
         super(screen, position, 3, 3);
-        angle = Math.atan((origin.getX() - position.getX()) / (origin.getY() - position.getY()));
-        angle += 180;
-        System.out.println(angle);
+        this.angle = angle;
         double pX = Math.cos(angle) * force;
         double pY = Math.sin(angle) * force;
         push = new Point(pX, pY);
@@ -24,7 +22,7 @@ public class Particle extends Square{
 
     @Override
     public void update() {
-        if (opacity <= 0) {return;}
+        if (opacity <= 0) {remove = true; return;}
         opacity = Math.max(opacity - 6, 0);
         setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity));
 

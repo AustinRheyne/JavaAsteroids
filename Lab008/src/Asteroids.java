@@ -12,7 +12,6 @@ import java.util.Scanner;
 
 class Asteroids extends Game {
     Ship player;
-    Point[] ship1 = new Point[]{new Point(0.0, 0.0), new Point(0.0, 20.0), new Point(20.0, 10.0)};
     ArrayList<Asteroid> obstructions = new ArrayList<>();
     ArrayList<Star> stars = new ArrayList<>();
     ArrayList<Bullet> bullets = new ArrayList<>();
@@ -26,7 +25,8 @@ class Asteroids extends Game {
         super("Asteroids!", 800, 600);
         this.setFocusable(true);
         this.requestFocus();
-        player = new Ship(this, this, this.ship1, 0.0);
+        Point[] ship1 = new Point[]{new Point(0.0, -10.0), new Point(0.0, 10.0), new Point(20.0, 0.0)};
+        player = new Ship(this, this, ship1, 0.0);
         player.setColor(Color.GRAY);
         this.addKeyListener(this.player);
 
@@ -50,42 +50,11 @@ class Asteroids extends Game {
             brush.setColor(Color.black);
             brush.fillRect(0, 0, this.width, this.height);
 
-            for (Star star : stars) {
-                star.paint(brush);
-            }
-
+            paintStars(brush);
+            paintParticles(brush);
             this.player.paint(brush);
-
-            for (Asteroid obj : obstructions) {
-                obj.paint(brush);
-                if (obj.collides(player)) {
-                    gamePlaying = false;
-                }
-            }
-
-
-            ArrayList<Bullet> toRemoveB = new ArrayList<>();
-            ArrayList<Asteroid> toRemoveAst = new ArrayList<>();
-            for (Bullet bullet : bullets) {
-                bullet.paint(brush);
-                if (bullet.remove) {
-                    toRemoveB.add(bullet);
-                } else { // All asteroids and bullets have been moved, check for collision
-                    for (Asteroid obj : obstructions) {
-                        if (bullet.collides(obj)) {
-                            bullet.remove = true;
-                            toRemoveAst.add(obj);
-                        }
-                    }
-                }
-            }
-            bullets.removeAll(toRemoveB);
-            for (Asteroid ast : toRemoveAst) {
-                splitAsteroid(ast);
-            }
-            for (Particle particle : particles) {
-                particle.paint(brush);
-            }
+            paintAsteroids(brush);
+            paintBullets(brush);
         }
     }
     public static void main(String[] args) {
@@ -142,8 +111,8 @@ class Asteroids extends Game {
         this.bullets.add(new Bullet(this, 9, this.player));
         new Thread(() -> {StdAudio.play("./Sounds/Shoot.wav");}).start();
     }
-    public void createParticle(Point position, Point origin, double force) {
-        particles.add(new Particle(this, position, origin, force));
+    public void createParticle(Point position, double angle, double force) {
+        particles.add(new Particle(this, position, angle, force));
     }
     public static int getRandomNumber(int min, int max) {
         return (int)(Math.random() * (double)(max - min) + (double)min);
@@ -159,5 +128,49 @@ class Asteroids extends Game {
         double y = ast.position.getY();
         try { obstructions.add(createAsteroid(x, y, ast.getSize())); obstructions.add(createAsteroid(x, y, ast.getSize())); } catch (Exception ignored) {}
         obstructions.remove(ast);
+    }
+
+    private void paintParticles(Graphics brush) {
+        ArrayList<Particle> toRemoveP = new ArrayList<>();
+        for (Particle particle : particles) {
+            particle.paint(brush);
+            if (particle.remove) {toRemoveP.add(particle);}
+        }
+        particles.removeAll(toRemoveP);
+    }
+    private void paintStars(Graphics brush) {
+        for (Star star : stars) {
+            star.paint(brush);
+        }
+    }
+    private void paintAsteroids(Graphics brush) {
+        for (Asteroid obj : obstructions) {
+            obj.paint(brush);
+            if (obj.collides(player)) {
+                gamePlaying = false;
+            }
+        }
+    }
+    private void paintBullets(Graphics brush) {
+
+        ArrayList<Bullet> toRemoveB = new ArrayList<>();
+        ArrayList<Asteroid> toRemoveAst = new ArrayList<>();
+        for (Bullet bullet : bullets) {
+            bullet.paint(brush);
+            if (bullet.remove) {
+                toRemoveB.add(bullet);
+            } else { // All asteroids and bullets have been moved, check for collision
+                for (Asteroid obj : obstructions) {
+                    if (bullet.collides(obj)) {
+                        bullet.remove = true;
+                        toRemoveAst.add(obj);
+                    }
+                }
+            }
+        }
+        bullets.removeAll(toRemoveB);
+        for (Asteroid ast : toRemoveAst) {
+            splitAsteroid(ast);
+        }
     }
 }
