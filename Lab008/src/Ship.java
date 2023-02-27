@@ -1,17 +1,17 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.lang.annotation.AnnotationFormatError;
 import java.security.spec.RSAOtherPrimeInfo;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class Ship extends Polygon implements KeyListener {
     private final double SPEED = 0.05;
-    private final double TORQUE = 2;
+    private final double TORQUE = 4;
     private boolean forward = false;
     private boolean backward = false;
     private boolean left = false;
     private boolean right = false;
-
     private Asteroids manager;
     private Point pull = new Point(0, 0);
     public Ship (Game screen, Asteroids manager, Point[] points, double rotation) {
@@ -28,7 +28,15 @@ public class Ship extends Polygon implements KeyListener {
 
     public void move() {
 
-        if (forward) { accelerate(SPEED); }
+        if (forward) {
+            accelerate(SPEED);
+            double angle = rotation - 90;
+            double pX = (Math.cos(angle) * 5) + position.getX();
+            double pY = (Math.sin(angle) * 5) + position.getY();
+            Point pos = new Point(pX, pY);
+            ((Asteroids)super.screen).createParticle(pos, position, 3);
+            System.out.println(rotation);
+        }
         if (backward) { accelerate(-SPEED); }
         double newX = position.getX() + pull.getX();
         double newY = position.getY() + pull.getY();

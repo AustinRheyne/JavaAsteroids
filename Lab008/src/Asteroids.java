@@ -1,7 +1,9 @@
 
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.ColorModel;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -14,22 +16,25 @@ class Asteroids extends Game {
     ArrayList<Asteroid> obstructions = new ArrayList<>();
     ArrayList<Star> stars = new ArrayList<>();
     ArrayList<Bullet> bullets = new ArrayList<>();
+    ArrayList<Particle> particles = new ArrayList<>();
     File[] largeAsteroidFiles;
     File[] mediumAsteroidFiles;
     File[] smallAsteroidFiles;
 
+    boolean gamePlaying = true;
     public Asteroids() {
         super("Asteroids!", 800, 600);
         this.setFocusable(true);
         this.requestFocus();
-        this.player = new Ship(this, this, this.ship1, 0.0);
+        player = new Ship(this, this, this.ship1, 0.0);
+        player.setColor(Color.GRAY);
         this.addKeyListener(this.player);
 
         largeAsteroidFiles = new File("./LargeAsteroids").listFiles();
         mediumAsteroidFiles = new File("./MediumAsteroids").listFiles();
         smallAsteroidFiles = new File("./SmallAsteroids").listFiles();
 
-        for(int i = 0; i < 7; ++i) {
+        for(int i = 0; i < 4; ++i) {
             try {
                 this.obstructions.add(this.createAsteroid());
             } catch (FileNotFoundException ignored) {}
@@ -41,35 +46,46 @@ class Asteroids extends Game {
 
     }
     public void paint(Graphics brush) {
-        brush.setColor(Color.black);
-        brush.fillRect(0, 0, this.width, this.height);
-        this.player.paint(brush);
+        if (gamePlaying) {
+            brush.setColor(Color.black);
+            brush.fillRect(0, 0, this.width, this.height);
 
-        for (Asteroid obj : obstructions) {
-            obj.paint(brush);
-        }
+            for (Star star : stars) {
+                star.paint(brush);
+            }
 
-        for (Star star : stars) {
-            star.paint(brush);
-        }
+            this.player.paint(brush);
 
-        ArrayList<Bullet> toRemoveB = new ArrayList<>();
-        ArrayList<Asteroid> toRemoveAst = new ArrayList<>();
-        for (Bullet bullet : bullets) {
-            bullet.paint(brush);
-            if (bullet.remove) { toRemoveB.add(bullet); }
-            else{ // All asteroids and bullets have been moved, check for collision
-                for(Asteroid obj : obstructions) {
-                    if (bullet.collides(obj)) {
-                        bullet.remove = true;
-                        toRemoveAst.add(obj);
+            for (Asteroid obj : obstructions) {
+                obj.paint(brush);
+                if (obj.collides(player)) {
+                    gamePlaying = false;
+                }
+            }
+
+
+            ArrayList<Bullet> toRemoveB = new ArrayList<>();
+            ArrayList<Asteroid> toRemoveAst = new ArrayList<>();
+            for (Bullet bullet : bullets) {
+                bullet.paint(brush);
+                if (bullet.remove) {
+                    toRemoveB.add(bullet);
+                } else { // All asteroids and bullets have been moved, check for collision
+                    for (Asteroid obj : obstructions) {
+                        if (bullet.collides(obj)) {
+                            bullet.remove = true;
+                            toRemoveAst.add(obj);
+                        }
                     }
                 }
             }
-        }
-        bullets.removeAll(toRemoveB);
-        for (Asteroid ast : toRemoveAst) {
-            splitAsteroid(ast);
+            bullets.removeAll(toRemoveB);
+            for (Asteroid ast : toRemoveAst) {
+                splitAsteroid(ast);
+            }
+            for (Particle particle : particles) {
+                particle.paint(brush);
+            }
         }
     }
     public static void main(String[] args) {
@@ -124,11 +140,16 @@ class Asteroids extends Game {
     }
     public void createBullet() {
         this.bullets.add(new Bullet(this, 9, this.player));
+        new Thread(() -> {StdAudio.play("./Sounds/Shoot.wav");}).start();
+    }
+    public void createParticle(Point position, Point origin, double force) {
+        particles.add(new Particle(this, position, origin, force));
     }
     public static int getRandomNumber(int min, int max) {
         return (int)(Math.random() * (double)(max - min) + (double)min);
     }
     public void splitAsteroid(Asteroid ast) {
+        new Thread(() -> {StdAudio.play("./Sounds/Explosion.wav");}).start();
         ast.decrementSize();
         if(ast.getSize() <= 0) {
             obstructions.remove(ast);

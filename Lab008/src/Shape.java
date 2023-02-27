@@ -39,6 +39,12 @@ public class Shape {
             points[points.length-1] = new Point(position.getX(), position.getY()); // Include the cetner of the circle
             return points;
         }
+        if(this instanceof Square) {
+            int width = (int)((Square)this).width;
+            int height = (int)((Square)this).height;
+            return new Point[]{new Point(position.getX(), position.getY()), new Point(width+position.getX(), position.getY()),
+                    new Point(width+position.getX(), height+position.getY()), new Point(position.getX(), height+position.getY())};
+        }
         int i = 0;
         Point center = ((Polygon)this).findCenter();
         Point[] points = new Point[shape.length];
@@ -76,10 +82,14 @@ public class Shape {
         update();
         wrapPosition();
 
+        brush.setColor(getColor());
         if(this instanceof Circle) {
             int radius = ((Circle)this).radius;
-            brush.setColor(getColor());
             brush.fillOval((int)position.getX(), (int)position.getY(), radius, radius);
+            return;
+        }
+        if(this instanceof Square) {
+            brush.fillRect((int)position.getX(), (int)position.getY(), (int)((Square)this).width, (int)((Square)this).height);
             return;
         }
         int[] x = new int[this.shape.length];
@@ -88,7 +98,6 @@ public class Shape {
             x[i] = (int) this.getPoints()[i].getX();
             y[i] = (int) this.getPoints()[i].getY();
         }
-        brush.setColor(getColor());
         brush.fillPolygon(x, y, shape.length);
     }
 
