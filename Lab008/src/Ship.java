@@ -34,9 +34,7 @@ public class Ship extends Polygon implements KeyListener {
             double pX = (Math.cos(angle) * 5) + position.getX();
             double pY = (Math.sin(angle) * 5) + position.getY();
             Point pos = new Point(position.getX(), position.getY());
-            ((Asteroids)super.screen).createParticle(pos, angle, 3);
-            System.out.println(rotation);
-            System.out.println(angle);
+            ((Asteroids)super.screen).createParticle(pos, getPull(), 1);
         }
         if (backward) { accelerate(-SPEED); }
         double newX = position.getX() + pull.getX();

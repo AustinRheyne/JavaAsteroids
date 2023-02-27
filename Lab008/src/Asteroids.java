@@ -111,8 +111,8 @@ class Asteroids extends Game {
         this.bullets.add(new Bullet(this, 9, this.player));
         new Thread(() -> {StdAudio.play("./Sounds/Shoot.wav");}).start();
     }
-    public void createParticle(Point position, double angle, double force) {
-        particles.add(new Particle(this, position, angle, force));
+    public void createParticle(Point position, Point push, double force) {
+        particles.add(new Particle(this, position, push, force));
     }
     public static int getRandomNumber(int min, int max) {
         return (int)(Math.random() * (double)(max - min) + (double)min);
