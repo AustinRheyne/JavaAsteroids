@@ -106,19 +106,19 @@ public class Shape {
     private void wrapPosition() {
         if (position.getX() > screen.getWidth()) {
             position.setX(0);
-            if(NO_WRAP) { onEdge(); }
+            onEdge();
         }
         if (position.getY() > screen.getHeight()) {
             position.setY(0);
-            if(NO_WRAP) { onEdge(); }
+            onEdge();
         }
         if (position.getX() < 0) {
             position.setX(screen.getWidth());
-            if(NO_WRAP) { onEdge(); }
+            onEdge();
         }
         if (position.getY() < 0) {
             position.setY(screen.getHeight());
-            if(NO_WRAP) { onEdge(); }
+            onEdge();
         }
 
     }

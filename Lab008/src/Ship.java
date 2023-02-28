@@ -30,10 +30,7 @@ public class Ship extends Polygon implements KeyListener {
 
         if (forward) {
             accelerate(SPEED);
-            double angle = (rotation + 180) % 360.0;
-            double pX = (Math.cos(angle) * 5) + position.getX();
-            double pY = (Math.sin(angle) * 5) + position.getY();
-            Point pos = new Point(position.getX(), position.getY());
+            Point pos = new Point(position.getX() + Asteroids.getRandomNumber(-5, 5), position.getY() + Asteroids.getRandomNumber(-5, 5));
             ((Asteroids)super.screen).createParticle(pos, getPull(), 1);
         }
         if (backward) { accelerate(-SPEED); }
