@@ -31,7 +31,7 @@ public class Ship extends Polygon implements KeyListener {
         if (forward) {
             accelerate(SPEED);
             Point pos = new Point(position.getX() + Asteroids.getRandomNumber(-5, 5), position.getY() + Asteroids.getRandomNumber(-5, 5));
-            ((Asteroids)super.screen).createParticle(pos, getPull(), 1);
+            ((Asteroids)super.screen).createParticle(pos, getPull(), 1.2);
         }
         if (backward) { accelerate(-SPEED); }
         double newX = position.getX() + pull.getX();

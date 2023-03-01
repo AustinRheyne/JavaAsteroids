@@ -17,8 +17,6 @@ class Asteroids extends Game {
     File[] largeAsteroidFiles;
     File[] mediumAsteroidFiles;
     File[] smallAsteroidFiles;
-    File highscoreFile;
-    int highscore = 0;
     boolean gamePlaying = true;
     PointsSystem points = new PointsSystem(0, 700, 40);
     Text gameOver;
@@ -35,14 +33,7 @@ class Asteroids extends Game {
         largeAsteroidFiles = new File("./LargeAsteroids").listFiles();
         mediumAsteroidFiles = new File("./MediumAsteroids").listFiles();
         smallAsteroidFiles = new File("./SmallAsteroids").listFiles();
-        highscoreFile = new File("./Highscore.txt");
 
-        try {
-            Scanner reader = new Scanner(highscoreFile);
-            highscore = Integer.parseInt(reader.nextLine());
-        } catch (IOException e) {
-            System.out.println("File does not exist");
-        }
 
         for(int i = 0; i < 4; ++i) {
             try {
@@ -66,10 +57,16 @@ class Asteroids extends Game {
             this.player.paint(brush);
             paintAsteroids(brush);
             paintBullets(brush);
-
             points.paint(brush);
-        } else {
 
+            if(obstructions.size() <= 2) {
+                for(int i = 0; i < 4; ++i) {
+                    try {
+                        this.obstructions.add(this.createAsteroid());
+                    } catch (FileNotFoundException ignored) {}
+                }
+            }
+        } else {
             gameOver.paint(brush);
         }
     }
@@ -126,6 +123,7 @@ class Asteroids extends Game {
     public void createBullet() {
         this.bullets.add(new Bullet(this, 9, this.player));
         new Thread(() -> {StdAudio.play("./Sounds/Shoot.wav");}).start();
+        this.player.accelerate(-2.5);
     }
     public void createParticle(Point position, Point push, double force) {
         particles.add(new Particle(this, position, push, force));
@@ -148,17 +146,6 @@ class Asteroids extends Game {
             obj.paint(brush);
             if (obj.collides(player)) {
                 gamePlaying = false;
-                if (points.points > highscore) {
-                    try {
-                        highscore = points.points;
-                        FileWriter fw = new FileWriter("./Highscore.txt");
-                        fw.write(highscore);
-                        System.out.println("NEW HIGH SCORE");
-                    } catch (IOException e) {
-                        System.out.println(e);
-                    }
-
-                }
             }
         }
     }
