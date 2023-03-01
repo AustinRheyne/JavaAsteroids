@@ -9,7 +9,6 @@ public class Bullet extends Circle{
     public Bullet(Game screen, int radius, Ship player) {
         super(screen, radius, new Point(player.position.getX(), player.position.getY()));
         this.player = player;
-        this.setColor(Color.RED);
         this.NO_WRAP = true;
 
         // Use the rotation of the ship and the unit circle to decide the correct rate of change
@@ -17,6 +16,8 @@ public class Bullet extends Circle{
         dy = Math.sin(Math.toRadians(player.rotation))*SPEED;
         inertia = new Point(player.getPull().getX(), player.getPull().getY()); // Take the current ship velocity so that we adhere to
         // Newtons laws of motion
+
+        this.setColor(Color.RED);
     }
     public void update() {
         position.setX(position.getX() + inertia.getX() + dx);

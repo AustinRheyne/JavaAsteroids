@@ -83,6 +83,7 @@ public class Shape {
         wrapPosition();
 
         brush.setColor(getColor());
+
         if(this instanceof Circle) {
             int radius = ((Circle)this).radius;
             brush.fillOval((int)position.getX(), (int)position.getY(), radius, radius);

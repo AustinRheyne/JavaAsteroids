@@ -1,5 +1,6 @@
 
 
+import javax.swing.text.Position;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,7 +25,7 @@ class Asteroids extends Game {
         super("Asteroids!", 800, 600);
         this.setFocusable(true);
         this.requestFocus();
-        Point[] ship1 = new Point[]{new Point(0.0, -10.0), new Point(0.0, 10.0), new Point(20.0, 0.0)};
+        Point[] ship1 = new Point[]{new Point(0.0, -10.0), new Point(0.0, 10.0), new Point(25.0, 0.0)};
         player = new Ship(this, this, ship1, 0.0);
         player.setColor(Color.GRAY);
         points.setColor(Color.orange);
@@ -125,8 +126,10 @@ class Asteroids extends Game {
         new Thread(() -> {StdAudio.play("./Sounds/Shoot.wav");}).start();
         this.player.accelerate(-2.5);
     }
-    public void createParticle(Point position, Point push, double force) {
-        particles.add(new Particle(this, position, push, force));
+    public Particle createParticle(Point position, Point push, double force) {
+        Particle p = new Particle(this, position, push, force);
+        particles.add(p);
+        return p;
     }
     private void paintParticles(Graphics brush) {
         ArrayList<Particle> toRemoveP = new ArrayList<>();
@@ -177,6 +180,16 @@ class Asteroids extends Game {
     public void splitAsteroid(Asteroid ast) {
         // Update our points system to reflect some damage done
         points.points += (3 - (ast.getSize()-1));
+
+        for (int i = 0; i < 180; i++) {
+            int theta = i % 180;
+            double x = Math.cos(theta);
+            double y = Math.sin(theta);
+            Particle p = createParticle(new Point(ast.findCenter().getX() + ast.position.getX(), ast.findCenter().getY() + ast.position.getY()),
+                           new Point(x, y), Math.random() * (ast.getSize() + 1));
+            Color c  = getRandomNumber(0, 2) == 0 ? Color.WHITE : Color.GRAY;
+            p.setColor(c);
+        }
 
         new Thread(() -> {StdAudio.play("./Sounds/Explosion.wav");}).start();
         ast.decrementSize();

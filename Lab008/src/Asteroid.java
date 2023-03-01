@@ -9,6 +9,11 @@ public class Asteroid extends Polygon{
     private int size = 3;
     public Asteroid (Game screen, Point[] points, int size) {
         super(points, new Point(Asteroids.getRandomNumber(0, screen.getWidth()), Asteroids.getRandomNumber(0, screen.getHeight())), 0, screen);
+        while (this.position.getX() > 300 && this.position.getX() < 500 && this.position.getY() > 200 && this.position.getY() < 400) {
+            this.position.setX(Asteroids.getRandomNumber(0, screen.getWidth()));
+            this.position.setY(Asteroids.getRandomNumber(0, screen.getHeight()));
+        }
+
         dx = Math.random();
         dy = Math.random();
         this.size = size;

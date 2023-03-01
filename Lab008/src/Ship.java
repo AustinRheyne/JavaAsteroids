@@ -31,7 +31,8 @@ public class Ship extends Polygon implements KeyListener {
         if (forward) {
             accelerate(SPEED);
             Point pos = new Point(position.getX() + Asteroids.getRandomNumber(-5, 5), position.getY() + Asteroids.getRandomNumber(-5, 5));
-            ((Asteroids)super.screen).createParticle(pos, getPull(), 1.2);
+            Particle p = ((Asteroids)super.screen).createParticle(pos, getPull(), 1.2);
+            p.setColor(Color.RED);
         }
         if (backward) { accelerate(-SPEED); }
         double newX = position.getX() + pull.getX();
@@ -59,7 +60,7 @@ public class Ship extends Polygon implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyChar() == 'w') {
+        if (e.getKeyChar() == 'w' ) {
             forward = true;
         }
         if (e.getKeyChar() == 's') {
