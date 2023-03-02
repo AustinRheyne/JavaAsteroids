@@ -28,13 +28,8 @@ public class Ship extends Polygon implements KeyListener {
 
     public void move() {
 
-        if (forward) {
-            accelerate(SPEED);
-            Point pos = new Point(position.getX() + Asteroids.getRandomNumber(-5, 5), position.getY() + Asteroids.getRandomNumber(-5, 5));
-            Particle p = ((Asteroids)super.screen).createParticle(pos, getPull(), 1.2);
-            p.setColor(Color.RED);
-        }
-        if (backward) { accelerate(-SPEED); }
+        if (forward) { accelerate(SPEED); createPropulsion(); }
+        if (backward) { accelerate(-SPEED); createPropulsion(); }
         double newX = position.getX() + pull.getX();
         double newY = position.getY() + pull.getY();
         position.setX(newX);
@@ -91,5 +86,12 @@ public class Ship extends Polygon implements KeyListener {
         if(e.getKeyChar() == 'd') {
             right = false;
         }
+    }
+
+    private void createPropulsion() {
+        Point pos = new Point(position.getX() + Asteroids.getRandomNumber(-5, 5), position.getY() + Asteroids.getRandomNumber(-5, 5));
+        Particle p = ((Asteroids)super.screen).createParticle(pos, getPull(), 1.2);
+        Color[] c = {Color.yellow, Color.orange, Color.red, Color.red};
+        p.setColor(c[Asteroids.getRandomNumber(-1, 4)]);
     }
 }

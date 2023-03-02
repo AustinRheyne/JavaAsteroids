@@ -1,5 +1,7 @@
 
 
+import com.sun.java.accessibility.util.TopLevelWindowListener;
+
 import javax.swing.text.Position;
 import java.awt.*;
 import java.io.File;
@@ -8,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.Level;
 
 class Asteroids extends Game {
     Ship player;
@@ -15,12 +18,15 @@ class Asteroids extends Game {
     ArrayList<Star> stars = new ArrayList<>();
     ArrayList<Bullet> bullets = new ArrayList<>();
     ArrayList<Particle> particles = new ArrayList<>();
+    ArrayList<Text> texts = new ArrayList<>();
     File[] largeAsteroidFiles;
     File[] mediumAsteroidFiles;
     File[] smallAsteroidFiles;
     boolean gamePlaying = true;
     PointsSystem points = new PointsSystem(0, 700, 40);
     Text gameOver;
+
+    int level = 1;
     public Asteroids() {
         super("Asteroids!", 800, 600);
         this.setFocusable(true);
@@ -35,16 +41,15 @@ class Asteroids extends Game {
         mediumAsteroidFiles = new File("./MediumAsteroids").listFiles();
         smallAsteroidFiles = new File("./SmallAsteroids").listFiles();
 
-
-        for(int i = 0; i < 4; ++i) {
+        for(int i = 0; i < 2; ++i) {
             try {
                 this.obstructions.add(this.createAsteroid());
             } catch (FileNotFoundException ignored) {}
         }
-
         for(int i = 0; i < 50; ++i) {
             this.stars.add(this.createStar());
         }
+
         gameOver = new Text("GAME OVER!", 375, 300);
         gameOver.setColor(Color.RED);
     }
@@ -58,14 +63,17 @@ class Asteroids extends Game {
             this.player.paint(brush);
             paintAsteroids(brush);
             paintBullets(brush);
+            paintText(brush);
             points.paint(brush);
 
-            if(obstructions.size() <= 2) {
-                for(int i = 0; i < 4; ++i) {
-                    try {
-                        this.obstructions.add(this.createAsteroid());
-                    } catch (FileNotFoundException ignored) {}
-                }
+            if(obstructions.size() == 0) {
+                nextLevel();
+
+                Text nextLevelText = new Text("LEVEL UP!", 375, 300);
+                nextLevelText.setDuration(2.0);
+                nextLevelText.setColor(Color.GREEN);
+                texts.add(nextLevelText);
+
             }
         } else {
             gameOver.paint(brush);
@@ -174,12 +182,30 @@ class Asteroids extends Game {
             splitAsteroid(ast);
         }
     }
+    private void paintText(Graphics brush) {
+        ArrayList<Text> toRemove = new ArrayList<>();
+        for(Text txt : texts) {
+            txt.paint(brush);
+            if (txt.remove) {
+                toRemove.add(txt);
+            }
+        }
+        texts.removeAll(toRemove);
+    }
+    private void nextLevel() {
+        level++;
+        for(int i = 0; i < 2*level; ++i) {
+            try {
+                this.obstructions.add(this.createAsteroid());
+            } catch (FileNotFoundException ignored) {}
+        }
+    }
     public static int getRandomNumber(int min, int max) {
         return (int)(Math.random() * (double)(max - min) + (double)min);
     }
     public void splitAsteroid(Asteroid ast) {
         // Update our points system to reflect some damage done
-        points.points += (3 - (ast.getSize()-1));
+        points.points += (3 - (ast.getSize()-1)) + (level-1);
 
         for (int i = 0; i < 180; i++) {
             int theta = i % 180;

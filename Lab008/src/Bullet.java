@@ -5,7 +5,7 @@ public class Bullet extends Circle{
     private double dx = 0.0;
     private double dy = 0.0;
     private Point inertia;
-    private final double SPEED = 5;
+    private final double SPEED = 7;
     public Bullet(Game screen, int radius, Ship player) {
         super(screen, radius, new Point(player.position.getX(), player.position.getY()));
         this.player = player;
@@ -20,6 +20,8 @@ public class Bullet extends Circle{
         this.setColor(Color.RED);
     }
     public void update() {
+        Point pullP = new Point(-inertia.getX()+Asteroids.getRandomNumber(-2, 2), -inertia.getY()+Asteroids.getRandomNumber(-2, 2));
+        ((Asteroids)screen).createParticle(new Point(position.getX(), position.getY()), pullP, 1).setColor(Color.red);
         position.setX(position.getX() + inertia.getX() + dx);
         position.setY(position.getY() + inertia.getY() + dy);
     }
