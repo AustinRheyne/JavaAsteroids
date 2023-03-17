@@ -10,7 +10,8 @@ public class Asteroid extends Polygon{
     private int size = 3;
     public Asteroid (Game screen, Point[] points, int size) {
         super(points, new Point(Asteroids.getRandomNumber(0, screen.getWidth()), Asteroids.getRandomNumber(0, screen.getHeight())), 0, screen);
-        while (this.position.getX() > 300 && this.position.getX() < 500 && this.position.getY() > 200 && this.position.getY() < 400) {
+        while (this.position.getX() > Math.max(0, ((Asteroids)screen).player.position.getX()- 100) && this.position.getX() < Math.min(800, ((Asteroids)screen).player.position.getX() + 100)
+                && this.position.getY() > Math.max(0, ((Asteroids)screen).player.position.getY()- 100) && this.position.getY() < Math.min(600, ((Asteroids)screen).player.position.getY() + 100)) {
             this.position.setX(Asteroids.getRandomNumber(0, screen.getWidth()));
             this.position.setY(Asteroids.getRandomNumber(0, screen.getHeight()));
         }

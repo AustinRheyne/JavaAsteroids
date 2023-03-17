@@ -1,16 +1,10 @@
 
-
-import com.sun.java.accessibility.util.TopLevelWindowListener;
-
-import javax.swing.text.Position;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
-import java.util.logging.Level;
 
 class Asteroids extends Game {
     Ship player;
@@ -25,8 +19,9 @@ class Asteroids extends Game {
     boolean gamePlaying = true;
     PointsSystem points = new PointsSystem(0, 700, 40);
     Text gameOver;
-
-    int level = 1;
+    Text levelText;
+    private boolean levelUp = false;
+    private int level = 1;
     public Asteroids() {
         super("Asteroids!", 800, 600);
         this.setFocusable(true);
@@ -35,6 +30,7 @@ class Asteroids extends Game {
         player = new Ship(this, this, ship1, 0.0);
         player.setColor(Color.GRAY);
         points.setColor(Color.orange);
+        texts.add(points);
         this.addKeyListener(this.player);
 
         largeAsteroidFiles = new File("./LargeAsteroids").listFiles();
@@ -46,12 +42,17 @@ class Asteroids extends Game {
                 this.obstructions.add(this.createAsteroid());
             } catch (FileNotFoundException ignored) {}
         }
+
         for(int i = 0; i < 50; ++i) {
             this.stars.add(this.createStar());
         }
 
         gameOver = new Text("GAME OVER!", 375, 300);
         gameOver.setColor(Color.RED);
+
+        levelText = new Text("LEVEL: " + level, 25, 40);
+        levelText.setColor(Color.white);
+        texts.add(levelText);
     }
     public void paint(Graphics brush) {
         if (gamePlaying) {
@@ -63,17 +64,17 @@ class Asteroids extends Game {
             this.player.paint(brush);
             paintAsteroids(brush);
             paintBullets(brush);
+            levelText.value = "LEVEL: " + level;
             paintText(brush);
-            points.paint(brush);
 
-            if(obstructions.size() == 0) {
+
+            if(levelUp) {
                 nextLevel();
 
                 Text nextLevelText = new Text("LEVEL UP!", 375, 300);
                 nextLevelText.setDuration(2.0);
                 nextLevelText.setColor(Color.GREEN);
                 texts.add(nextLevelText);
-
             }
         } else {
             gameOver.paint(brush);
@@ -84,7 +85,6 @@ class Asteroids extends Game {
         a.repaint();
     }
     public Asteroid createAsteroid() throws FileNotFoundException, ArrayIndexOutOfBoundsException {
-
         File chosenPrefabFile =  largeAsteroidFiles[getRandomNumber(0, largeAsteroidFiles.length)];
         Scanner reader = new Scanner(chosenPrefabFile);
         String data = reader.nextLine();
@@ -100,6 +100,7 @@ class Asteroids extends Game {
         }
 
         //Point[] asteroid1 = new Point[]{new Point(0, 0), new Point(0, 20), new Point(10, 30), new Point(20, 20), new Point(20, 0)};
+
         return new Asteroid(this, result, 3);
     }
     public Asteroid createAsteroid(double oldX, double oldY, int size) throws FileNotFoundException, ArrayIndexOutOfBoundsException {
@@ -194,6 +195,7 @@ class Asteroids extends Game {
     }
     private void nextLevel() {
         level++;
+        levelUp = false;
         for(int i = 0; i < 2*level; ++i) {
             try {
                 this.obstructions.add(this.createAsteroid());
@@ -221,6 +223,9 @@ class Asteroids extends Game {
         ast.decrementSize();
         if(ast.getSize() <= 0) {
             obstructions.remove(ast);
+            if (obstructions.size() == 0) {
+                levelUp = true;
+            }
             return;
         }
         double x = ast.position.getX();

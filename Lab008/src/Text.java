@@ -1,11 +1,9 @@
 import java.awt.*;
-import java.sql.Time;
-import java.util.Spliterator;
 
 public class Text {
-    String value;
-    int x;
-    int y;
+    public String value;
+    private int x;
+    private int y;
     public Color color = Color.WHITE;
     public boolean remove = false;
 
@@ -25,8 +23,6 @@ public class Text {
     public void paint(Graphics brush) {
         update();
         brush.setColor(color);
-        Font font = new Font("Helvetica", Font.BOLD, 100);
-        FontMetrics fm = brush.getFontMetrics(font);
         brush.drawString(value, x, y);
     }
 

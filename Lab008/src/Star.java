@@ -2,7 +2,7 @@ public class Star extends Circle{
     int SPEED;
     public Star(Game screen, int radius) {
         super(screen, radius, new Point(Asteroids.getRandomNumber(0, screen.getWidth()), Asteroids.getRandomNumber(0, screen.getHeight())));
-        SPEED = radius/4;
+        SPEED = Math.max(radius/3, 1);
     }
 
     @Override
